@@ -133,16 +133,28 @@ class SymmetricTSP(BaseTSP):
 
     @classmethod
     def create_random_instance(
-        cls, n_cities: int, coordinate_range: Tuple[float, float] = (0, 100), seed: Optional[int] = None
+        cls, n_cities: int, coordinate_range: Tuple[Tuple[float, float], Tuple[float, float]] = ((0, 100), (0, 100)), seed: Optional[int] = None
     ):
         """创建随机对称TSP实例"""
         if seed is not None:
             np.random.seed(seed)
-        coordinates = np.random.uniform(
-            coordinate_range[0], coordinate_range[1], (n_cities, 2)
-        )
+        coordinates = np.zeros((n_cities, 2))
+        coordinates[:, 0] = np.random.uniform(coordinate_range[0][0], coordinate_range[0][1], n_cities)
+        coordinates[:, 1] = np.random.uniform(coordinate_range[1][0], coordinate_range[1][1], n_cities)
         # Pass coordinates to constructor so they are stored
         return cls(city_coordinates=coordinates)
+    # @classmethod
+    # def create_random_instance(
+    #     cls, n_cities: int, coordinate_range: Tuple[float, float] = (0, 100), seed: Optional[int] = None
+    # ):
+    #     """创建随机对称TSP实例"""
+    #     if seed is not None:
+    #         np.random.seed(seed)
+    #     coordinates = np.random.uniform(
+    #         coordinate_range[0], coordinate_range[1], (n_cities, 2)
+    #     )
+    #     # Pass coordinates to constructor so they are stored
+    #     return cls(city_coordinates=coordinates)
 
 
 class AsymmetricTSP(BaseTSP):
@@ -707,7 +719,7 @@ def main_experiment_controller(args):
         print("\n" + "="*25 + " 对称TSP实验 " + "="*25)
         sym_tsp_instance = SymmetricTSP.create_random_instance(
             n_cities=args.n_cities_sym,
-            coordinate_range=(args.coord_min, args.coord_max),
+            coordinate_range=((args.coord_min, args.coord_max), (args.coord_min, args.coord_max)),
             seed=args.seed 
         )
         problem_desc_sym = f"SymmetricTSP-{args.n_cities_sym}cities"
